@@ -11,7 +11,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx elm-live src/Main.elm -- --output=public/app.js",
+    "test": "npx elm-test"
   },
   "author": "",
   "license": "ISC"

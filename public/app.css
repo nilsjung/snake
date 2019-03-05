@@ -1,0 +1,19 @@
+.snake {
+    padding: 3em;
+    width: 800px;
+    height: 700px;
+    margin: auto;
+    border: lightgrey 1px solid;
+    border-radius: 5px;
+    box-shadow: lightgrey 10px 10px 10px;
+    background-color: #ffffff;
+}
+
+.snake__container {
+    background: #fafafa;
+    padding: 2em;
+    border-radius: 5px;
+    height: 80%;
+    border: lightgrey 3px solid;
+}
+

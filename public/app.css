@@ -3,10 +3,10 @@
     width: 800px;
     height: 700px;
     margin: auto;
-    border: lightgrey 1px solid;
-    border-radius: 5px;
-    box-shadow: lightgrey 10px 10px 10px;
     background-color: #ffffff;
+}
+.snake__headline {
+    color: dimgrey;
 }
 
 .snake__container {

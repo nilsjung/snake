@@ -53,11 +53,9 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div [Html.Attributes.class "snake"]
-    [ h1 [] [text "Snake Game"]
+    [ h1 [class "snake__headline"] [text "Snake Game"]
     , div [Html.Attributes.class "snake__container"]
-      [ div []
-          [ span [] [text "Snake"]]
-      , playground model
+      [ playground model
       ]
     ]
 

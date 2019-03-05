@@ -25,7 +25,4 @@ suite =
                     in
                         Expect.false "Expect the point to be not in the list" (Main.isCollusion list point)
             ]
-        ],
-        [ describe ""
-
         ]

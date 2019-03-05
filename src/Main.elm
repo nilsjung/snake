@@ -82,7 +82,7 @@ update msg model =
 gameContainer : Model -> Html Msg
 gameContainer model =
      let
-         viewBoxSize = "0 0 500 500"
+         viewBoxSize = "0 0 300 300"
          range = List.range 0 100
      in
         svg [viewBox viewBoxSize, Svg.Attributes.class "snake__playground"]

@@ -3,6 +3,8 @@ module Model exposing (..)
 import Keyboard exposing (Key(..))
 import Time
 
+import Point exposing (..)
+
 type Msg
     = KeyMsg Keyboard.Msg
     | Move

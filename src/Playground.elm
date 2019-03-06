@@ -1,6 +1,8 @@
 module Playground exposing (playground)
 import Html exposing (Html, Attribute)
 
+import Point exposing (..)
+
 import Svg exposing (Svg, svg, rect, g)
 import Svg.Attributes exposing (..)
 

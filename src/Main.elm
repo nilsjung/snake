@@ -11,7 +11,7 @@ import Keyboard.Arrows
 
 import Model exposing (..)
 import Playground exposing (playground)
-
+import Point exposing(Point)
 ------- Main ------
 
 main = Browser.element

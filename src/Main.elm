@@ -3,7 +3,7 @@ module Main exposing (..)
 import Browser
 import Browser.Events
 
-import Html exposing (Html, Attribute, div, span, h1, text)
+import Html exposing (Html, Attribute, div, h1, text)
 import Html.Attributes exposing (..)
 
 import Keyboard exposing (Key(..))
@@ -73,13 +73,21 @@ nextGameCycle model = case List.head model.nextMoves of
 ------- View -------
 
 view : Model -> Html Msg
-view model =
-    div [Html.Attributes.class "snake"]
-    [ h1 [class "snake__headline"] [text "Snake Game"]
-    , div [Html.Attributes.class "snake__container"]
-      [ playground model
-      ]
-    ]
+view model = case model.gameState of
+    Running -> div [Html.Attributes.class "snake"]
+                [ h1 [class "snake__headline"] [text "Snake Game"]
+                , div [] [text (Debug.toString model.nextMoves)]
+                , div [Html.Attributes.class "snake__container"]
+                  [ playground model
+                  ]
+                ]
+    GameOver -> div [Html.Attributes.class "snake"]
+                [ h1 [class "snake__headline"] [text "Snake Game"]
+                , div [] [text (Debug.toString model.nextMoves)]
+                , div [class "snake__container snake__container--game-over"]
+                  [ div [class "snake__container__game-over-message"] [text "Game Over"]
+                  ]
+                ]
 
 
 ------- Subscriptions -------

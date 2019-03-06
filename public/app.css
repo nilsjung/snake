@@ -16,6 +16,19 @@
     border: lightgrey 3px solid;
 }
 
+.snake__container--game-over {
+    background: indianred;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.snake__container__game-over-message {
+    margin: auto;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .snake__playground {
     height: 100%;
     width: 100%;

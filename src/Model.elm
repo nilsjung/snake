@@ -17,7 +17,7 @@ type alias Model =
     { snake: List Point
     , food: Point
     , pressedKeys: List Key
-    , nextMove: Point
+    , nextMove: Maybe Key
     , gameState: GameState
     }
 

@@ -37,7 +37,7 @@ initialModel =
     { snake = defaultSnake
     , pressedKeys = []
     , food = Point 15 15
-    , nextMove = Point 0 0
+    , nextMove = Nothing
     , gameState = Running
     }
 
@@ -49,14 +49,34 @@ init _ =
 
 ------- Update -------
 
+isOppositeDirection : Key -> Key -> Bool
+isOppositeDirection key1 key2 =
+    if (key1 == ArrowRight || key2 == ArrowRight) && (key1 == ArrowLeft || key2 == ArrowLeft) then
+        True
+    else if (key1 == ArrowUp || key2 == ArrowUp) && (key1 == ArrowDown || key2 == ArrowDown) then
+        True
+    else
+        False
+
+
+disableOppositeDirections : Key -> Maybe Key -> Maybe Key
+disableOppositeDirections nextDirection actualDirection =
+    case actualDirection of
+        Just key ->
+            if isOppositeDirection nextDirection key then
+                Just key
+            else
+                Just nextDirection
+        Nothing -> Just nextDirection
+
 -- reverse the key up and down functionality
 getNextMoveFromKey : Model -> Model
 getNextMoveFromKey model = case List.head model.pressedKeys of
     Just a -> case a of
-        ArrowUp -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowDown))}
-        ArrowDown -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowUp))}
-        ArrowLeft -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowLeft))}
-        ArrowRight -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowRight))}
+        ArrowUp -> {model | nextMove = (disableOppositeDirections ArrowDown model.nextMove)}
+        ArrowDown -> {model | nextMove = (disableOppositeDirections ArrowUp model.nextMove)}
+        ArrowLeft -> {model | nextMove = (disableOppositeDirections ArrowLeft model.nextMove)}
+        ArrowRight -> {model | nextMove = (disableOppositeDirections ArrowRight model.nextMove)}
         _ -> model
     Nothing -> model
 
@@ -91,12 +111,15 @@ reversePoint point max =
 nextGameCycle : Model -> (Model, Cmd Msg)
 nextGameCycle model =
     let
+        keyToPoint = case model.nextMove of
+            Just key -> Keyboard.Arrows.arrows [key]
+            Nothing -> Point 0 0
         movingSnake =
             List.foldr
               (\element newSnake
                 ->  if outOfBounds element Constants.playgroundSize then
-                       moveSnakeElements model.nextMove model.snake newSnake (reversePoint element Constants.playgroundSize)
-                    else moveSnakeElements model.nextMove model.snake newSnake element)
+                       moveSnakeElements keyToPoint model.snake newSnake (reversePoint element Constants.playgroundSize)
+                    else moveSnakeElements keyToPoint model.snake newSnake element)
               []
               model.snake
         eatenFood = isCollusion model.snake model.food

@@ -8,6 +8,7 @@ import Point exposing (..)
 type Msg
     = KeyMsg Keyboard.Msg
     | Move
+    | GenerateFood Point
     | Clock Time.Posix
 
 type PointType = Snake | Food | Empty

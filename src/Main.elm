@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Random exposing (..)
 import Browser
 import Browser.Events
 
@@ -85,8 +86,14 @@ update msg model =
     case msg of
         KeyMsg keyMsg -> ({ model | pressedKeys = Keyboard.update keyMsg model.pressedKeys } |> update Move)
         Move -> (getNextMoveFromKey model, Cmd.none)
+        GenerateFood food -> ({model | food = food}, Cmd.none)
         Clock _ -> nextGameCycle model
 
+
+generateRandomFood :  Random.Generator Point
+generateRandomFood =
+    let randomInt = Random.int 0 Constants.playgroundSize
+    in Random.map2 (\x y -> Point x y) randomInt randomInt
 
 
 outOfBounds : Point -> Int -> Bool
@@ -123,13 +130,17 @@ nextGameCycle model =
               []
               model.snake
         eatenFood = isCollusion model.snake model.food
-        newModel =
-            if eatenFood then
-                {model | snake = addElementToSnake movingSnake}
-            else { model | snake = movingSnake }
     in
-    (newModel
-    , Cmd.none)
+        if eatenFood then
+            ({ model
+                | snake = addElementToSnake movingSnake
+                , food = Point 0 0
+            }, Random.generate GenerateFood generateRandomFood )
+        else
+        ({ model
+            | snake = movingSnake
+        }
+        , Cmd.none)
 
 addElementToSnake : List Point -> List Point
 addElementToSnake oldSnake =

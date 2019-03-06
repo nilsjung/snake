@@ -11,9 +11,13 @@
 
 .snake__container {
     background: #fafafa;
-    padding: 2em;
     border-radius: 5px;
     height: 80%;
     border: lightgrey 3px solid;
+}
+
+.snake__playground {
+    height: 100%;
+    width: 100%;
 }
 

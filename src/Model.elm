@@ -1,10 +1,15 @@
 module Model exposing (..)
 
 import Keyboard exposing (Key(..))
+import Time
 
 type Msg
     = KeyMsg Keyboard.Msg
-    | Tick
+    | Move
+    | Clock Time.Posix
+
+type PointType = Snake | Food | Empty
+type GameState = Running | GameOver
 
 type alias Point =
     { x : Int
@@ -15,12 +20,10 @@ type alias Model =
     { snake: List Point
     , food: Point
     , pressedKeys: List Key
-    , nextMove: Point
-    , gameOver: Bool
+    , nextMoves: List Point
+    , gameState: GameState
     }
 
-
-type PointType = Snake | Food | Empty
 getPointType : Model -> Point -> PointType
 getPointType model point =
   if List.any (\s -> s == point) model.snake then
@@ -29,3 +32,14 @@ getPointType model point =
     Food
   else
     Empty
+
+
+--- Some math on Point
+
+-- Add Two Points
+add : Point -> Point -> Point
+add p1 p2 = {x = p1.x + p2.x, y = p1.y + p2.y}
+
+-- Add a point to the list of Points
+addPointToList : Point -> List Point -> List Point
+addPointToList point list = List.map (add point) list

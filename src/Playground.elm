@@ -11,8 +11,8 @@ import Model exposing (..)
 playground : Model -> Html Msg
 playground model =
      let
-         viewBoxSize = "0 0 300 300"
-         range = List.range 0 100
+         viewBoxSize = "0 0 100 100"
+         range = List.range 0 200
      in
         svg [viewBox viewBoxSize, Svg.Attributes.class "snake__playground"]
             (List.map (\row -> gameRow model row) range)
@@ -20,15 +20,15 @@ playground model =
 gameRow : Model -> Int -> Svg Msg
 gameRow model row =
     let
-        range = List.range 0 100
+        range = List.range 0 200
     in
         g [] (List.filterMap (\cell -> gameCell model row cell) range)
 
 gameCell : Model -> Int -> Int -> Maybe (Svg Msg)
 gameCell model cell row =
     let
-        cellWidth = 3
-        cellHeight = 3
+        cellWidth = 2
+        cellHeight = 2
         pixelX = (row * cellWidth)
         pixelY = (cell * cellHeight)
     in

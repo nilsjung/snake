@@ -23,18 +23,20 @@ main = Browser.element
 
 
 isCollusion : List Point -> Point -> Bool
-isCollusion snake point = List.member point snake
+isCollusion snake point = case List.head snake of
+    Just a -> Point.equal a point
+    Nothing -> False
 
 ------- Model -------
 
 defaultSnake : List Point
-defaultSnake = [{x=9, y=30}, {x=10, y=30}, {x=10, y=31}]
+defaultSnake = [Point 13 13, Point 12 13, Point 11 13, Point 10 13]
 
 initialModel =
     { snake = defaultSnake
     , pressedKeys = []
-    , food = {x = 0, y = 0}
-    , nextMoves = []
+    , food = Point 15 15
+    , nextMove = Point 0 0
     , gameState = Running
     }
 
@@ -50,11 +52,11 @@ init _ =
 getNextMoveFromKey : Model -> Model
 getNextMoveFromKey model = case List.head model.pressedKeys of
     Just a -> case a of
-        ArrowUp -> {model | nextMoves = (Keyboard.Arrows.arrows (List.singleton ArrowDown))::model.nextMoves}
-        ArrowDown -> {model | nextMoves = (Keyboard.Arrows.arrows (List.singleton ArrowUp))::model.nextMoves}
-        ArrowLeft -> {model | nextMoves = (Keyboard.Arrows.arrows (List.singleton ArrowLeft))::model.nextMoves}
-        ArrowRight -> {model | nextMoves = (Keyboard.Arrows.arrows (List.singleton ArrowRight))::model.nextMoves}
-        arrow -> model
+        ArrowUp -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowDown))}
+        ArrowDown -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowUp))}
+        ArrowLeft -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowLeft))}
+        ArrowRight -> {model | nextMove = (Keyboard.Arrows.arrows (List.singleton ArrowRight))}
+        _ -> model
     Nothing -> model
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -66,24 +68,52 @@ update msg model =
 
 
 nextGameCycle : Model -> (Model, Cmd Msg)
-nextGameCycle model = case List.head model.nextMoves of
-    Just nextMove -> ({model | snake = addPointToList nextMove model.snake}, Cmd.none)
-    Nothing -> (model, Cmd.none)
+nextGameCycle model =
+    let
+        movingSnake =
+            List.foldr
+              (\element newSnake -> moveSnakeElements model.nextMove model.snake newSnake element)
+              []
+              model.snake
+        eatenFood = isCollusion model.snake model.food
+        newModel =
+            if eatenFood then
+                {model | snake = addElementToSnake movingSnake}
+            else { model | snake = movingSnake }
+    in
+    (newModel
+    , Cmd.none)
 
+addElementToSnake : List Point -> List Point
+addElementToSnake oldSnake =
+    let
+        lastElement = List.head (List.reverse oldSnake)
+    in
+        case lastElement of
+            Just a -> a::oldSnake
+            Nothing -> oldSnake
+
+
+moveSnakeElements : Point -> List Point -> List Point -> Point -> List Point
+moveSnakeElements nextMove oldSnake newSnake snakeElement =
+        if List.length newSnake ==  0 then
+            [snakeElement, Point.add snakeElement nextMove]
+        else if List.length newSnake == List.length oldSnake then
+            newSnake
+        else snakeElement::newSnake
 ------- View -------
 
 view : Model -> Html Msg
 view model = case model.gameState of
     Running -> div [Html.Attributes.class "snake"]
                 [ h1 [class "snake__headline"] [text "Snake Game"]
-                , div [] [text (Debug.toString model.nextMoves)]
+                , div [] [text (Debug.toString model.nextMove)]
                 , div [Html.Attributes.class "snake__container"]
                   [ playground model
                   ]
                 ]
     GameOver -> div [Html.Attributes.class "snake"]
                 [ h1 [class "snake__headline"] [text "Snake Game"]
-                , div [] [text (Debug.toString model.nextMoves)]
                 , div [class "snake__container snake__container--game-over"]
                   [ div [class "snake__container__game-over-message"] [text "Game Over"]
                   ]
@@ -92,7 +122,7 @@ view model = case model.gameState of
 
 ------- Subscriptions -------
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
     [ Sub.map KeyMsg Keyboard.subscriptions
     , Browser.Events.onAnimationFrame Clock

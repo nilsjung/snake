@@ -13,16 +13,11 @@ type Msg
 type PointType = Snake | Food | Empty
 type GameState = Running | GameOver
 
-type alias Point =
-    { x : Int
-    , y: Int
-    }
-
 type alias Model =
     { snake: List Point
     , food: Point
     , pressedKeys: List Key
-    , nextMoves: List Point
+    , nextMove: Point
     , gameState: GameState
     }
 
@@ -34,14 +29,3 @@ getPointType model point =
     Food
   else
     Empty
-
-
---- Some math on Point
-
--- Add Two Points
-add : Point -> Point -> Point
-add p1 p2 = {x = p1.x + p2.x, y = p1.y + p2.y}
-
--- Add a point to the list of Points
-addPointToList : Point -> List Point -> List Point
-addPointToList point list = List.map (add point) list

@@ -9,18 +9,14 @@ import Svg.Attributes exposing (..)
 -- Module imports
 import Model exposing (..)
 
+import Constants
+
 --- default playground size settings
-size : Int
-size = 70
-
-playgroundSize : Point
-playgroundSize = Point 500 500
-
 columnHeight :  Int -> Float
-columnHeight board = (toFloat playgroundSize.y) / (toFloat board)
+columnHeight board = (toFloat Constants.boardDimension.y) / (toFloat board)
 
 columnWidth : Int -> Float
-columnWidth board = (toFloat playgroundSize.x) / (toFloat board)
+columnWidth board = (toFloat Constants.boardDimension.x) / (toFloat board)
 
 
 fieldColor: PointType -> String
@@ -34,9 +30,9 @@ fieldColor cell = case cell of
 playground : Model -> Html Msg
 playground model =
      let
-         range = List.range 0 size
-         sizeX = round ((toFloat playgroundSize.x) / (toFloat size)) * size
-         sizeY = round ((toFloat playgroundSize.y) / (toFloat size)) * size
+         range = List.range 0 Constants.playgroundSize
+         sizeX = round ((toFloat Constants.boardDimension.x) / (toFloat Constants.playgroundSize)) * Constants.playgroundSize
+         sizeY = round ((toFloat Constants.boardDimension.y) / (toFloat Constants.playgroundSize)) * Constants.playgroundSize
          viewBoxSize = "0 0 " ++ String.fromInt sizeX ++ " " ++ String.fromInt sizeY
      in
         svg [viewBox viewBoxSize, Svg.Attributes.class "snake__playground"]
@@ -45,15 +41,15 @@ playground model =
 gameRow : Model -> Int -> Svg Msg
 gameRow model row =
     let
-        range = List.range 0 size
+        range = List.range 0 Constants.playgroundSize
     in
         g [] (List.filterMap (\cell -> gameCell model row cell) range)
 
 gameCell : Model -> Int -> Int -> Maybe (Svg Msg)
 gameCell model cell row =
     let
-        cellWidth = columnWidth size
-        cellHeight = columnHeight size
+        cellWidth = columnWidth Constants.playgroundSize
+        cellHeight = columnHeight Constants.playgroundSize
         pixelX = (toFloat row * cellWidth)
         pixelY = (toFloat cell * cellHeight)
     in

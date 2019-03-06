@@ -3,6 +3,7 @@ module Main exposing (..)
 import Browser
 import Browser.Events
 
+import Constants
 import Html exposing (Html, Attribute, div, h1, text)
 import Html.Attributes exposing (..)
 
@@ -67,12 +68,35 @@ update msg model =
         Clock _ -> nextGameCycle model
 
 
+
+outOfBounds : Point -> Int -> Bool
+outOfBounds element boundary = (element.x > boundary || element.x < 0) || (element.y > boundary || element.y < 0)
+
+reversePoint: Point -> Int -> Point
+reversePoint point max =
+    let isXOut = point.x > max || point.x < 0
+        isYOut = point.y > max || point.y < 0
+        newX = abs ((abs point.x) - max)
+        newY = abs ((abs point.y) - max)
+     in
+        if isXOut && isYOut then
+            Point newX newY
+        else if isYOut then
+            Point point.x newY
+        else if isXOut then
+            Point newX point.y
+        else
+            point
+
 nextGameCycle : Model -> (Model, Cmd Msg)
 nextGameCycle model =
     let
         movingSnake =
             List.foldr
-              (\element newSnake -> moveSnakeElements model.nextMove model.snake newSnake element)
+              (\element newSnake
+                ->  if outOfBounds element Constants.playgroundSize then
+                       moveSnakeElements model.nextMove model.snake newSnake (reversePoint element Constants.playgroundSize)
+                    else moveSnakeElements model.nextMove model.snake newSnake element)
               []
               model.snake
         eatenFood = isCollusion model.snake model.food

@@ -1,8 +1,10 @@
 .snake {
     padding: 3em;
     width: 800px;
-    height: 700px;
     margin: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     background-color: #ffffff;
 }
 .snake__headline {
@@ -12,8 +14,10 @@
 .snake__container {
     background: #fafafa;
     border-radius: 5px;
-    height: 80%;
     border: lightgrey 3px solid;
+
+    width: 700px;
+    height: 700px;
 }
 
 .snake__container--game-over {
@@ -27,6 +31,7 @@
     margin: auto;
     font-size: 20px;
     font-weight: bold;
+
 }
 
 .snake__playground {

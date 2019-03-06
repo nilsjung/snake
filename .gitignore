@@ -2,3 +2,5 @@ elm-stuff
 node_modules
 *-lock.json
 .idea
+
+public/app.js

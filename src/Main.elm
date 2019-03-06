@@ -107,7 +107,6 @@ view : Model -> Html Msg
 view model = case model.gameState of
     Running -> div [Html.Attributes.class "snake"]
                 [ h1 [class "snake__headline"] [text "Snake Game"]
-                , div [] [text (Debug.toString model.nextMove)]
                 , div [Html.Attributes.class "snake__container"]
                   [ playground model
                   ]

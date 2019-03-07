@@ -7,6 +7,11 @@
     flex-direction: column;
     background-color: #ffffff;
 }
+
+.snake * {
+    font-family: 'Raleway', sans-serif;
+}
+
 .snake__headline {
     color: dimgrey;
 }
@@ -31,11 +36,32 @@
     margin: auto;
     font-size: 20px;
     font-weight: bold;
+}
 
+.snake__game-over-information {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .snake__playground {
     height: 100%;
     width: auto;
+}
+
+.snake__information__container {
+    width: 700px;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 5px 0;
+}
+
+.snake__information__label, .snake__information__value {
+    font-weight: bolder;
+    color: dimgrey;
+}
+
+.snake__information__label {
+    margin-right: 5px;
 }
 

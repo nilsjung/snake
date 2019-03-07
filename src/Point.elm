@@ -1,13 +1,9 @@
 module Point exposing (..)
 
-
 type alias Point =
     { x : Int
     , y: Int
     }
-
-
---- Some math on Point
 
 -- Add Two Points
 add : Point -> Point -> Point

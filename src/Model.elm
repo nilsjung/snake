@@ -10,6 +10,7 @@ type Msg
     | Move
     | GenerateFood Point
     | Clock Time.Posix
+    | Restart
 
 type PointType = Snake | Food | Empty
 type GameState = Running | GameOver
@@ -20,6 +21,9 @@ type alias Model =
     , pressedKeys: List Key
     , nextMove: Maybe Key
     , gameState: GameState
+    , speed: Int
+    , actualScore: Int
+    , highScore: Int
     }
 
 getPointType : Model -> Point -> PointType

@@ -71,4 +71,24 @@ suite =
                 in
                   Expect.equal (Point 1 0) (Main.reversePoint element size)
             ]
+        , describe "isGameOver"
+            [ test "returns false if snake has 1 element" <|
+                \_ ->
+                    let
+                        snake = [Point 1 1]
+                    in
+                        Expect.false "no game over" (Main.isGameOver snake)
+            , test "returns false if head is not in tail" <|
+                \_ ->
+                    let
+                        snake = [Point 1 1, Point 1 2]
+                    in
+                        Expect.false "no game over" (Main.isGameOver snake)
+            , test "returns true if snake head is in tail" <|
+                \_ ->
+                    let
+                        snake = [Point 1 1, Point 1 2, Point 1 3, Point 1 1]
+                    in
+                        Expect.true "game over" (Main.isGameOver snake)
+            ]
         ]

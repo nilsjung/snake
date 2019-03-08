@@ -3,6 +3,7 @@ version: '3'
 services:
   website:
     build: .
+    command: npm run build
     volumes:
         - ./index.html:/usr/local/apache2/htdocs/index.html
         - ./public:/usr/local/apache2/htdocs/public/

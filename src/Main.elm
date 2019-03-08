@@ -99,7 +99,7 @@ update msg model =
 
 generateRandomFood :  Random.Generator Point
 generateRandomFood =
-    let randomInt = Random.int 0 (Constants.playgroundSize - 1)
+    let randomInt = Random.int 0 (Constants.playgroundSize - 3)
     in Random.map2 (\x y -> Point x y) randomInt randomInt
 
 

@@ -8,7 +8,7 @@ import List
 import Time
 
 import Constants
-import Html exposing (Html, Attribute, button, span, div, h1, text)
+import Html exposing (Html, Attribute, button, a, span, div, h1, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (..)
 
@@ -104,12 +104,12 @@ generateRandomFood =
 
 
 outOfBounds : Point -> Int -> Bool
-outOfBounds element boundary = (element.x > boundary || element.x < 0) || (element.y > boundary || element.y < 0)
+outOfBounds element boundary = (element.x >= boundary || element.x <= 0) || (element.y >= boundary || element.y <= 0)
 
 reversePoint: Point -> Int -> Point
 reversePoint point max =
-    let isXOut = point.x > max || point.x < 0
-        isYOut = point.y > max || point.y < 0
+    let isXOut = point.x >= max || point.x <= 0
+        isYOut = point.y >= max || point.y <= 0
         newX = abs ((abs point.x) - max)
         newY = abs ((abs point.y) - max)
      in
@@ -147,7 +147,7 @@ nextGameCycle model =
               model.snake
         snakeHead = List.head movingSnake
         snakeTail = List.tail movingSnake
-        eatenFood = isCollusion (List.reverse movingSnake) model.food
+        eatenFood = isCollusion (List.reverse model.snake) model.food
         calculatedScore = case List.maximum (model.actualScore::[model.highScore]) of
             Just max -> max
             Nothing -> model.highScore

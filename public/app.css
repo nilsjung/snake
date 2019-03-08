@@ -26,16 +26,24 @@
 }
 
 .snake__container--game-over {
-    background: indianred;
+    background: rgba(34, 34, 50, .3);
     justify-content: center;
     display: flex;
     align-items: center;
 }
 
 .snake__container__game-over-message {
-    margin: auto;
-    font-size: 20px;
+    padding: 1em;
+    color: white;
+    font-size: 50px;
+    text-shadow: dimgrey 3px 3px 3px;
     font-weight: bold;
+}
+
+.snake__retry-button {
+    padding: .5em 1em;
+    font-weight: bold;
+    box-shadow: dimgrey 3px 3px 3px;
 }
 
 .snake__game-over-information {

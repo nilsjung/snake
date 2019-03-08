@@ -3,10 +3,9 @@ version: '3'
 services:
   website:
     build: .
-    command: npm run build
     volumes:
         - ./index.html:/usr/local/apache2/htdocs/index.html
-        - ./public:/usr/local/apache2/htdocs/public/
+        - ./public/app.css:/usr/local/apache2/htdocs/public/app.css
     environment:
       - VIRTUAL_HOST=snake.nilsjung.de
       - LETSENCRYPT_HOST=snake.nilsjung.de

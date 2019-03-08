@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  website:
+    build: .
+    volumes:
+        - ./index.html:/www/index.html
+        - ./public:/www/public
+    environment:
+      - VIRTUAL_HOST=snake.nilsjung.de
+      - LETSENCRYPT_HOST=snake.nilsjung.de
+      - LETSENCRYPT_MAIL=nils.m.jung@posteo.net
+    restart: always
+
+networks:
+    default:
+        external:
+            name: nginx-proxy

@@ -3,6 +3,7 @@ module Model exposing (..)
 import Keyboard exposing (Key(..))
 import Time
 
+import Snake exposing (Snake)
 import Point exposing (..)
 
 type Msg
@@ -13,10 +14,10 @@ type Msg
     | Restart
 
 type PointType = Snake | Food | Empty
-type GameState = Running | GameOver
+type GameState = Running | GameOver | GameOverWithHighScore
 
 type alias Model =
-    { snake: List Point
+    { snake: Snake
     , food: Point
     , pressedKeys: List Key
     , nextMove: Maybe Key

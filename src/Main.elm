@@ -7,17 +7,18 @@ import List
 
 import Time
 
-import Constants
-import Html exposing (Html, Attribute, button, a, span, div, h1, text)
-import Html.Events exposing (onClick)
-import Html.Attributes exposing (..)
+import Html exposing (Html, Attribute)
+
 
 import Keyboard exposing (Key(..))
 import Keyboard.Arrows
 
+import Constants
 import Model exposing (..)
-import Playground exposing (playground)
-import Point exposing(Point)
+import Point exposing(..)
+import View exposing (..)
+import Snake exposing (..)
+import GamePlay exposing (..)
 ------- Main ------
 
 main = Browser.element
@@ -27,15 +28,9 @@ main = Browser.element
     , subscriptions = subscriptions
     }
 
-
-isCollusion : List Point -> Point -> Bool
-isCollusion snake point = case List.head snake of
-    Just a -> Point.equal a point
-    Nothing -> False
-
 ------- Model -------
 
-defaultSnake : List Point
+defaultSnake : Snake
 defaultSnake = [Point 13 13]
 
 initialModel =
@@ -57,36 +52,6 @@ init _ =
 
 ------- Update -------
 
-isOppositeDirection : Key -> Key -> Bool
-isOppositeDirection key1 key2 =
-    if (key1 == ArrowRight || key2 == ArrowRight) && (key1 == ArrowLeft || key2 == ArrowLeft) then
-        True
-    else if (key1 == ArrowUp || key2 == ArrowUp) && (key1 == ArrowDown || key2 == ArrowDown) then
-        True
-    else
-        False
-
-disableOppositeDirections : Key -> Maybe Key -> Maybe Key
-disableOppositeDirections nextDirection actualDirection =
-    case actualDirection of
-        Just key ->
-            if isOppositeDirection nextDirection key then
-                Just key
-            else
-                Just nextDirection
-        Nothing -> Just nextDirection
-
--- reverse the key up and down functionality
-getNextMoveFromKey : Model -> Model
-getNextMoveFromKey model = case List.head model.pressedKeys of
-    Just a -> case a of
-        ArrowUp -> {model | nextMove = (disableOppositeDirections ArrowDown model.nextMove)}
-        ArrowDown -> {model | nextMove = (disableOppositeDirections ArrowUp model.nextMove)}
-        ArrowLeft -> {model | nextMove = (disableOppositeDirections ArrowLeft model.nextMove)}
-        ArrowRight -> {model | nextMove = (disableOppositeDirections ArrowRight model.nextMove)}
-        _ -> model
-    Nothing -> model
-
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -97,38 +62,6 @@ update msg model =
         Restart -> ({initialModel | highScore = model.highScore}, Cmd.none)
 
 
-generateRandomFood :  Random.Generator Point
-generateRandomFood =
-    let randomInt = Random.int 0 (Constants.playgroundSize - 3)
-    in Random.map2 (\x y -> Point x y) randomInt randomInt
-
-
-outOfBounds : Point -> Int -> Bool
-outOfBounds element boundary = (element.x >= boundary || element.x < 0) || (element.y >= boundary || element.y < 0)
-
-reversePoint: Point -> Int -> Point
-reversePoint point max =
-    let isXOut = point.x >= max || point.x < 0
-        isYOut = point.y >= max || point.y < 0
-        newX = abs ((abs point.x) - max)
-        newY = abs ((abs point.y) - max)
-     in
-        if isXOut && isYOut then
-            Point newX newY
-        else if isYOut then
-            Point point.x newY
-        else if isXOut then
-            Point newX point.y
-        else
-            point
-
-isGameOver : Maybe Point -> Maybe (List Point)-> Bool
-isGameOver head tail =
-    case head of
-        Just h-> case tail of
-            Just t -> List.member h t
-            Nothing -> False
-        Nothing -> False
 
 
 nextGameCycle : Model -> (Model, Cmd Msg)
@@ -148,18 +81,26 @@ nextGameCycle model =
         snakeHead = List.head movingSnake
         snakeTail = List.tail movingSnake
         eatenFood = isCollusion (List.reverse model.snake) model.food
+        isNewHighScore = model.highScore < model.actualScore
         calculatedScore = case List.maximum (model.actualScore::[model.highScore]) of
             Just max -> max
             Nothing -> model.highScore
     in
         if (isGameOver snakeHead snakeTail) then
             case model.nextMove of -- the game has not start yet
-                Just _ -> (
-                    { model
-                      | gameState = GameOver
-                      , highScore = calculatedScore
-                      }
-                    , Cmd.none)
+                Just _ ->
+                    if isNewHighScore
+                    then (
+                        { model
+                            | gameState = GameOverWithHighScore
+                            , highScore = calculatedScore
+                        }
+                        , Cmd.none)
+                    else
+                        ({ model
+                            | gameState = GameOver
+                            , highScore = calculatedScore
+                        }, Cmd.none )
                 Nothing -> (model, Cmd.none)
         else if eatenFood then
             ({ model
@@ -174,59 +115,11 @@ nextGameCycle model =
         }
         , Cmd.none)
 
-addElementToSnake : List Point -> List Point
-addElementToSnake oldSnake =
-    let
-        lastElement = List.head (List.reverse oldSnake)
-    in
-        case lastElement of
-            Just a -> a::oldSnake
-            Nothing -> oldSnake
 
-
-moveSnakeElements : Point -> List Point -> List Point -> Point -> List Point
-moveSnakeElements nextMove oldSnake newSnake snakeElement =
-        if List.length newSnake ==  0 then
-            [snakeElement, Point.add snakeElement nextMove]
-        else if List.length newSnake == List.length oldSnake then
-            newSnake
-        else snakeElement::newSnake
 ------- View -------
 
 view : Model -> Html Msg
-view model =
-    let
-        speedLevel = 100 - model.speed
-        repository = div [class "snake__github-repository"]
-            [ a [class "snake__github-repository__link", href "https://github.com/nilsjung/snake"] [text "github.com/nilsjung/snake"]
-            ]
-    in
-    case model.gameState of
-        Running -> div [Html.Attributes.class "snake"]
-            [ div [class "snake__headline__container"]
-                [ h1 [class "snake__headline"] [text "Snake Game"]
-                , div [class "snake__information__container"]
-                        [ span [class "snake__information"] [span [class "snake__information__label"] [text "Speed"], span [class "snake__information__value snake__information__speed-level"] [text (String.fromInt speedLevel)]]
-                        , span [class "snake__information"] [span [class "snake__information__label"] [text "Score"], span [class "snake__information__value snake__information__score"] [text (String.fromInt model.actualScore)]]
-                        , span [class "snake__information"] [span [class "snake__information__label"] [text "High Score"], span [class "snake__information__value snake__information__high-score"] [text (String.fromInt model.highScore)]]
-                        ]
-                ]
-            , div [Html.Attributes.class "snake__container"]
-              [ playground model
-              ]
-            , repository
-            ]
-        GameOver -> div [Html.Attributes.class "snake"]
-            [ h1 [class "snake__headline"] [text "Snake Game"]
-            , div [class "snake__container snake__container--game-over"]
-                [ div [class "snake__game-over-information"]
-                      [ div [class "snake__container__game-over-message"] [text "Game Over"]
-                      , div [class "snake__retry-button__container"]
-                        [ button [class "snake__retry-button", onClick Restart] [text "Retry"]]
-                      ]
-                ]
-                , repository
-            ]
+view model = mainGameBoard model
 
 
 ------- Subscriptions -------

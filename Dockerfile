@@ -1,8 +1,6 @@
-FROM busybox
-ADD index.html /www/index.html
-ADD public /www/public
+FROM httpd:2.4-alpine
 
-RUN apt-get update && apt install node && npm install && npm build
+COPY ./ /usr/local/apache2/htdocs/
+WORKDIR /usr/local/apache2/htdocs/
 
-EXPOSE 8080
-CMD trap "exit 0;" TERM INT; httpd -p 8080 -h /www -f & wait
+RUN apk add --update nodejs-npm && npm install && npm run build

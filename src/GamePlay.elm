@@ -43,7 +43,7 @@ getNextMoveFromKey model = case List.head model.pressedKeys of
 
 generateRandomFood :  Random.Generator Point
 generateRandomFood =
-    let randomInt = Random.int 0 (Constants.playgroundSize - 3)
+    let randomInt = Random.int 2 (Constants.playgroundSize - 3)
     in Random.map2 (\x y -> Point x y) randomInt randomInt
 
 

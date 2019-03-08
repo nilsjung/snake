@@ -12,6 +12,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "npx elm-live src/Main.elm -- --output=public/app.js",
+    "build": "npx elm make --output=public/app.js",
     "test": "npx elm-test"
   },
   "author": "",

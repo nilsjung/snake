@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import Keyboard exposing (Key(..))
+import Keyboard.Arrows exposing (Direction)
 import Time
 
 import Snake exposing (Snake)
@@ -20,7 +21,7 @@ type alias Model =
     { snake: Snake
     , food: Point
     , pressedKeys: List Key
-    , nextMove: Maybe Key
+    , nextMove: Direction
     , gameState: GameState
     , speed: Int
     , actualScore: Int

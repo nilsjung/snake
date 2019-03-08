@@ -11,7 +11,7 @@ import Html exposing (Html, Attribute)
 
 
 import Keyboard exposing (Key(..))
-import Keyboard.Arrows
+import Keyboard.Arrows exposing (..)
 
 import Constants
 import Model exposing (..)
@@ -37,7 +37,7 @@ initialModel =
     { snake = defaultSnake
     , pressedKeys = []
     , food = Point 15 15
-    , nextMove = Nothing
+    , nextMove = NoDirection
     , gameState = Running
     , speed = 100
     , actualScore = 0
@@ -68,8 +68,11 @@ nextGameCycle : Model -> (Model, Cmd Msg)
 nextGameCycle model =
     let
         keyToPoint = case model.nextMove of
-            Just key -> Keyboard.Arrows.arrows [key]
-            Nothing -> Point 0 0
+            South -> Point 0 1
+            North -> Point 0 -1
+            East  -> Point 1 0
+            West  -> Point -1 0
+            _     -> Point 0 0
         movingSnake =
             List.foldr
               (\element newSnake
@@ -88,7 +91,8 @@ nextGameCycle model =
     in
         if (isGameOver snakeHead snakeTail) then
             case model.nextMove of -- the game has not start yet
-                Just _ ->
+                NoDirection -> (model, Cmd.none)
+                _ ->
                     if isNewHighScore
                     then (
                         { model
@@ -101,7 +105,7 @@ nextGameCycle model =
                             | gameState = GameOver
                             , highScore = calculatedScore
                         }, Cmd.none )
-                Nothing -> (model, Cmd.none)
+
         else if eatenFood then
             ({ model
                 | snake = addElementToSnake movingSnake
@@ -120,7 +124,6 @@ nextGameCycle model =
 
 view : Model -> Html Msg
 view model = mainGameBoard model
-
 
 ------- Subscriptions -------
 subscriptions : Model -> Sub Msg

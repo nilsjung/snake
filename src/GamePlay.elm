@@ -2,6 +2,7 @@
 module GamePlay exposing (..)
 
 import Keyboard exposing (Key(..))
+import Keyboard.Arrows exposing (..)
 import Random
 import Constants
 
@@ -10,33 +11,30 @@ import Point exposing (Point)
 import Snake exposing (Snake)
 
 
-isOppositeDirection : Key -> Key -> Bool
+isOppositeDirection : Direction -> Direction -> Bool
 isOppositeDirection key1 key2 =
-    if (key1 == ArrowRight || key2 == ArrowRight) && (key1 == ArrowLeft || key2 == ArrowLeft) then
+    if (key1 == East || key2 == East) && (key1 == West || key2 == West) then
         True
-    else if (key1 == ArrowUp || key2 == ArrowUp) && (key1 == ArrowDown || key2 == ArrowDown) then
+    else if (key1 == North || key2 == North) && (key1 == South || key2 == South) then
         True
     else
         False
 
-disableOppositeDirections : Key -> Maybe Key -> Maybe Key
+disableOppositeDirections : Direction -> Direction -> Direction
 disableOppositeDirections nextDirection actualDirection =
-    case actualDirection of
-        Just key ->
-            if isOppositeDirection nextDirection key then
-                Just key
-            else
-                Just nextDirection
-        Nothing -> Just nextDirection
+    if isOppositeDirection nextDirection actualDirection then
+         actualDirection
+    else
+        nextDirection
 
 -- reverse the key up and down functionality
 getNextMoveFromKey : Model -> Model
 getNextMoveFromKey model = case List.head model.pressedKeys of
     Just a -> case a of
-        ArrowUp -> {model | nextMove = (disableOppositeDirections ArrowDown model.nextMove)}
-        ArrowDown -> {model | nextMove = (disableOppositeDirections ArrowUp model.nextMove)}
-        ArrowLeft -> {model | nextMove = (disableOppositeDirections ArrowLeft model.nextMove)}
-        ArrowRight -> {model | nextMove = (disableOppositeDirections ArrowRight model.nextMove)}
+        ArrowUp -> {model | nextMove = (disableOppositeDirections North model.nextMove)}
+        ArrowDown -> {model | nextMove = (disableOppositeDirections South model.nextMove)}
+        ArrowLeft -> {model | nextMove = (disableOppositeDirections West model.nextMove)}
+        ArrowRight -> {model | nextMove = (disableOppositeDirections East model.nextMove)}
         _ -> model
     Nothing -> model
 

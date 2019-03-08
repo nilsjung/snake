@@ -197,18 +197,24 @@ view : Model -> Html Msg
 view model =
     let
         speedLevel = 100 - model.speed
+        repository = div [class "snake__github-repository"]
+            [ a [class "snake__github-repository__link", href "https://github.com/nilsjung/snake"] [text "github.com/nilsjung/snake"]
+            ]
     in
     case model.gameState of
         Running -> div [Html.Attributes.class "snake"]
-            [ h1 [class "snake__headline"] [text "Snake Game"]
-            , div [class "snake__information__container"]
-                [ span [class "snake__information"] [span [class "snake__information__label"] [text "Speed"], span [class "snake__information__value snake__information__speed-level"] [text (String.fromInt speedLevel)]]
-                , span [class "snake__information"] [span [class "snake__information__label"] [text "Score"], span [class "snake__information__value snake__information__score"] [text (String.fromInt model.actualScore)]]
-                , span [class "snake__information"] [span [class "snake__information__label"] [text "High Score"], span [class "snake__information__value snake__information__high-score"] [text (String.fromInt model.highScore)]]
+            [ div [class "snake__headline__container"]
+                [ h1 [class "snake__headline"] [text "Snake Game"]
+                , div [class "snake__information__container"]
+                        [ span [class "snake__information"] [span [class "snake__information__label"] [text "Speed"], span [class "snake__information__value snake__information__speed-level"] [text (String.fromInt speedLevel)]]
+                        , span [class "snake__information"] [span [class "snake__information__label"] [text "Score"], span [class "snake__information__value snake__information__score"] [text (String.fromInt model.actualScore)]]
+                        , span [class "snake__information"] [span [class "snake__information__label"] [text "High Score"], span [class "snake__information__value snake__information__high-score"] [text (String.fromInt model.highScore)]]
+                        ]
                 ]
             , div [Html.Attributes.class "snake__container"]
               [ playground model
               ]
+            , repository
             ]
         GameOver -> div [Html.Attributes.class "snake"]
             [ h1 [class "snake__headline"] [text "Snake Game"]
@@ -219,6 +225,7 @@ view model =
                         [ button [class "snake__retry-button", onClick Restart] [text "Retry"]]
                       ]
                 ]
+                , repository
             ]
 
 

@@ -1,15 +1,27 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 .snake {
-    padding: 3em;
+    height: 100%;
     width: 800px;
     margin: auto;
     display: flex;
     align-items: center;
+    justify-content: space-around;
     flex-direction: column;
     background-color: #ffffff;
 }
 
 .snake * {
     font-family: 'Raleway', sans-serif;
+}
+
+.snake__headline__container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .snake__headline {
@@ -21,8 +33,8 @@
     border-radius: 5px;
     border: lightgrey 3px solid;
 
-    width: 700px;
-    height: 700px;
+    width: 600px;
+    height: 600px;
 }
 
 .snake__container--game-over {
@@ -58,7 +70,7 @@
 }
 
 .snake__information__container {
-    width: 700px;
+    width: 600px;
     display: flex;
     justify-content: space-evenly;
     padding: 5px 0;
@@ -73,3 +85,12 @@
     margin-right: 5px;
 }
 
+.snake__github-repository__link {
+    font-size: 12px;
+    text-decoration: none;
+    color: dimgray;
+}
+
+.snake__github-repository__link:hover {
+    text-shadow: lightgrey 1px 1px;
+}

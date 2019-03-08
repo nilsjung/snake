@@ -1,4 +1,4 @@
-module Main_Test exposing (..)
+module GamePlayTest exposing (..)
 
 import Expect exposing (Expectation)
 import GamePlay

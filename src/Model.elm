@@ -13,9 +13,10 @@ type Msg
     | GenerateFood Point
     | Clock Time.Posix
     | Restart
+    | LoadHighscore String
 
 type PointType = Snake | Food | Empty
-type GameState = Running | GameOver | GameOverWithHighScore
+type GameState = Running | GameOver
 
 type alias Model =
     { snake: Snake

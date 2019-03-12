@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Snake</title>
   <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-  <link type="text/css" rel="stylesheet" href="public/app.css" />
+  <link href="public/app.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -14,6 +14,42 @@
   var app = Elm.Main.init({
     node: document.getElementById("app")
   });
+
+  var cookieName = 'highscore';
+
+  function storeHighscoreInCookie(highscore) {
+    document.cookie = cookieName + "=" + highscore;
+  }
+
+  // store high score in cookie (elm to js)
+  app.ports.saveHighscore.subscribe(function(highscore) {
+    storeHighscoreInCookie(highscore);
+  });
+
+  function loadCookie (name) {
+    var dc = document.cookie;
+    var cname = name + "=";
+    var end, begin = null;
+
+    if (dc.length > 0) {
+      begin = dc.indexOf(cname);
+      if (begin !== -1) {
+        begin += cname.length;
+        end = dc.indexOf(";", begin);
+        if (end === -1) {
+          end = dc.length;
+        }
+        console.log(decodeURI(dc.substring(begin, end)))
+        return decodeURI(dc.substring(begin, end));
+      }
+    }
+    return "";
+  };
+
+  var highscore = loadCookie(cookieName);
+
+  // send stored high score to elm
+  app.ports.loadHighscore.send(highscore)
 </script>
 </body>
 </html>

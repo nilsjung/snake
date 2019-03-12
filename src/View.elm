@@ -28,19 +28,6 @@ mainGameBoard model =
                             ]
                         ]
                     ]
-
-            GameOverWithHighScore ->
-                div [class "snake__container snake__container--game-over"]
-                    [ div [class "snake__game-over-information"]
-                        [ div [class "snake__container__game-over-message"] [text "Game Over"]
-                        , div [class "snake__container__game-over-with-highscore"]
-                            [ div [class "snake__container__hightscore-message"] [text "New Highscore"]
-                            , div [class "snake__container__hightscore"] [text (String.fromInt model.highScore)]
-                            ]
-                        , div [class "snake__retry-button__container"]
-                            [ button [class "snake__retry-button", onClick Restart] [text "Retry"]]
-                        ]
-                    ]
     in
     div [Html.Attributes.class "snake"]
         [ div [class "snake__headline__container"]

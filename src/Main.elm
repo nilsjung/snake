@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Random exposing (..)
 import Browser
@@ -28,8 +28,10 @@ main = Browser.element
     , subscriptions = subscriptions
     }
 
-------- Model -------
 
+port saveHighscore : Int -> Cmd msg
+
+------- Model -------
 defaultSnake : Snake
 defaultSnake = [Point 13 13]
 
@@ -54,12 +56,24 @@ init _ =
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
+    let
+        newHighscore =
+            if model.highScore < model.actualScore then
+                model.actualScore
+            else
+                model.highScore
+        loadingHighscore highscore =
+            case (String.toInt highscore) of
+                Just h -> h
+                Nothing -> 0
+    in
     case msg of
+        LoadHighscore highscore -> ({model | highScore = loadingHighscore highscore}, Cmd.none)
         KeyMsg keyMsg -> ({ model | pressedKeys = Keyboard.update keyMsg model.pressedKeys } |> update Move)
         Move -> (getNextMoveFromKey model, Cmd.none)
         GenerateFood food -> ({model | food = food}, Cmd.none)
         Clock _ -> nextGameCycle model
-        Restart -> ({initialModel | highScore = model.highScore}, Cmd.none)
+        Restart -> ({initialModel | highScore = newHighscore}, saveHighscore newHighscore)
 
 
 
@@ -84,7 +98,6 @@ nextGameCycle model =
         snakeHead = List.head movingSnake
         snakeTail = List.tail movingSnake
         eatenFood = isCollusion (List.reverse model.snake) model.food
-        isNewHighScore = model.highScore < model.actualScore
         calculatedScore = case List.maximum (model.actualScore::[model.highScore]) of
             Just max -> max
             Nothing -> model.highScore
@@ -93,18 +106,10 @@ nextGameCycle model =
             case model.nextMove of -- the game has not start yet
                 NoDirection -> (model, Cmd.none)
                 _ ->
-                    if isNewHighScore
-                    then (
-                        { model
-                            | gameState = GameOverWithHighScore
-                            , highScore = calculatedScore
-                        }
-                        , Cmd.none)
-                    else
-                        ({ model
-                            | gameState = GameOver
-                            , highScore = calculatedScore
-                        }, Cmd.none )
+                    ({ model
+                        | gameState = GameOver
+                        , highScore = calculatedScore
+                    }, Cmd.none )
 
         else if eatenFood then
             ({ model
@@ -126,10 +131,14 @@ view : Model -> Html Msg
 view model = mainGameBoard model
 
 ------- Subscriptions -------
+
+port loadHighscore : (String -> msg) -> Sub msg
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
     [ Sub.map KeyMsg Keyboard.subscriptions
     , Time.every (toFloat model.speed) Clock
+    , loadHighscore Model.LoadHighscore
     ]
 
